@@ -1,0 +1,14 @@
+GET http://localhost:3000/customers/
+
+###
+
+DELETE http://localhost:3000/customers/7
+
+###
+
+POST http://localhost:3000/customers/
+Content-Type: application/json
+
+{"id": 8, "name": "bhavani Durga", "age": 27, "mobile":957339000, "email": "naresh@gmail.com", "created_on": "", "updated_on": "", "address_id":8, "lane": "ABCD", "country": "India", "pincode":"500039", "city":"Hyderabad" }
+
+###
