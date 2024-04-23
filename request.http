@@ -2,13 +2,27 @@ GET http://localhost:3000/customers/
 
 ###
 
-DELETE http://localhost:3000/customers/7
+GET http://localhost:3000/customers/1
+
+###
+DELETE http://localhost:3000/customers/5
 
 ###
 
 POST http://localhost:3000/customers/
 Content-Type: application/json
 
-{"id": 8, "name": "bhavani Durga", "age": 27, "mobile":957339000, "email": "naresh@gmail.com", "created_on": "", "updated_on": "", "address_id":8, "lane": "ABCD", "country": "India", "pincode":"500039", "city":"Hyderabad" }
+{"id": 4, "name": "bhavani Durga", "age": 27, "mobile":957339000, "email": "naresh@gmail.com", "created_on": "", "updated_on": "", "address_id":4, "lane": "ABCD", "country": "India", "pincode":"500039", "city":"Hyderabad" }
 
 ###
+PUT http://localhost:3000/customers/1
+Content-Type: application/json
+
+{ "age": 27, "mobile":9573392830,"name":"Srikanth" }
+
+
+###
+PUT http://localhost:3000/address/1
+Content-Type: application/json
+
+{ "country": "INDIA", "lane": "Cabels" }

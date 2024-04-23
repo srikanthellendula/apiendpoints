@@ -3,18 +3,22 @@ const sqlite3 = require('sqlite3').verbose()
 const app = express()
 app.use(express.json());
 
+//Intial Customer Data
 const customersJson = JSON.stringify([{'id': 1, 'name': 'srikanth', 'age': 27, 'phone':9573392830, 'email': 'srikanth@gmail.com', 'created_on': '', 'updated_on': '', 'address_id':1 },
                     {'id': 2, 'name': 'satya', 'age': 26, 'phone':9573392831, 'email': 'satya@gmail.com', 'created_on': '', 'updated_on': '' , 'address_id':2},
                     {'id': 3, 'name': 'durga', 'age': 25, 'phone':9573392832, 'email': 'durga@gmail.com', 'created_on': '', 'updated_on': '', 'address_id':3 },
                     {'id': 4, 'name': 'bhavani', 'age': 24, 'phone':9573392833, 'email': 'bhavani@gmail.com', 'created_on': '', 'updated_on': '', 'address_id':4 },
                     {'id': 5, 'name': 'praveen', 'age': 23, 'phone':9573392834, 'email': 'praveen@gmail.com', 'created_on': '', 'updated_on': '', 'address_id':5 }])
 
+// Intial Address Data
 const addressJson = JSON.stringify([{'address_id':1, 'lane': 'Market Lane', 'country':'USA', 'city':'NYC', 'pincode':339283, 'updated_on':''},
                     {'address_id':2, 'lane': 'IT Towers', 'country':'UK', 'city':'London', 'pincode':957339, 'updated_on':''},
                     {'address_id':3, 'lane': 'Mindspace', 'country':'India', 'city':'Hyderabad', 'pincode':500045, 'updated_on':''},
                     {'address_id':4, 'lane': 'Financial District', 'country':'India', 'city':'Delhi', 'pincode':500034, 'updated_on':''},
-                    {'address_id':5, 'lane': 'TSIIC SEZ', 'country':'UAE', 'city':'Dubai', 'pincode': 203456 , 'updated_on':''},]) 
-//creating database
+                   {'address_id':5, 'lane': 'TSIIC SEZ', 'country':'UAE', 'city':'Dubai', 'pincode': 203456 , 'updated_on':''},]) 
+
+                   
+//Connecting database
 const db = new sqlite3.Database('database.db', (err)=>{
     if(err){
         console.error(err)
@@ -22,7 +26,7 @@ const db = new sqlite3.Database('database.db', (err)=>{
 
     
     else{
-        console.log('DB created')
+        console.log('DB connected')
     }
 } ) 
 
@@ -75,7 +79,8 @@ addressJson.forEach(eachItem=>{
     })
 }) */
 
- 
+
+//Get all customers
 app.get('/customers/', async (req, res)=>{
     const query1 = 'SELECT * FROM customers INNER JOIN address ON customers.address_id = address.address_id'
     
@@ -89,8 +94,7 @@ app.get('/customers/', async (req, res)=>{
                     return {id: eachItem.id, Name: eachItem.name, Mobile: eachItem.mobile, Email: eachItem.email, updated_on: eachItem.updated_on, created_on: eachItem.created_on,  Address:{Lane: eachItem.lane, city: eachItem.city, country: eachItem.country, pincode: eachItem.pincode} }
                 })
                 
-                res.send(finalResult)
-                 
+                res.send(finalResult)                
                 
             }
 
@@ -98,13 +102,11 @@ app.get('/customers/', async (req, res)=>{
     }
     catch(e){
         console.log(e)
-    }
-
-    
+    }   
      
 })
 
-
+// Get particular customer with given ID
 app.get('/customers/:id', async(req, res)=>{
     const id = req.params.id
     const query = `SELECT * FROM customers WHERE id=${id}`
@@ -116,11 +118,10 @@ app.get('/customers/:id', async(req, res)=>{
     }
     catch(e){
         console.log(e)
-    }
-
-    
+    }    
 })
 
+// Delete specific customer with given ID
 app.delete('/customers/:id', async(req, res)=>{
     const id = req.params.id
     const query = `DELETE FROM customers WHERE id=${id}`
@@ -143,6 +144,7 @@ app.delete('/customers/:id', async(req, res)=>{
     
 })
 
+// Adding new customer with customer details and address details
 app.post('/customers/', (req, res)=>{
     const time = new Date
     const updated = time.toLocaleString()
@@ -168,6 +170,65 @@ app.post('/customers/', (req, res)=>{
      })
 
 
+})
+
+//Modify customer personal details not address
+app.put('/customers/:id', (req, res)=>{
+    const time = new Date
+    const updated = time.toLocaleString()
+    const {id} = req.params
+    const {name, email, mobile, address_id, age, lane, country, city, pincode } = req.body
+    console.log(req.body)
+    
+    for(let column in req.body){            
+        const val = req.body[`${column}`]
+        console.log(column, val)
+        const updateQuery = `UPDATE customers SET ${column}=? WHERE id=?` 
+        console.log(updateQuery)
+        try{
+            db.all(updateQuery,[val, id], (err, result)=>{
+                if(err){
+                    console.error(err)
+                }
+                else{
+                    res.send(`Updated ${column}`)
+                }
+            })
+        }
+        catch(e){
+            console.error(e)
+        }
+    }
+})
+
+
+//Modify customer address details
+app.put('/address/:id', (req, res)=>{
+    const time = new Date
+    const updated = time.toLocaleString()
+    const {id} = req.params
+    const {address_id, lane, country, city, pincode } = req.body
+    console.log(req.body)
+    
+    for(let column in req.body){            
+        const val = req.body[`${column}`]
+        console.log(column, val)
+        const updateQuery = `UPDATE address SET ${column}=? WHERE address_id=?` 
+        console.log(updateQuery)
+        try{
+            db.all(updateQuery,[val, id], (err, result)=>{
+                if(err){
+                    console.error(err)
+                }
+                else{
+                    res.send(`Updated ${column}`)
+                }
+            })
+        }
+        catch(e){
+            console.error(e)
+        }
+    }
 })
 
 
